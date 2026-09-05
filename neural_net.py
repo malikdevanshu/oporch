@@ -1,5 +1,5 @@
 import numpy as np
-from activations import tanh
+from activations import ActiFunctions
 from losses import Loss
 
 class NeuralNet:
@@ -14,8 +14,9 @@ class NeuralNet:
 
     def forward_pass(self, X):
 
+
         z = np.dot(self.w1, X.T) + self.b1
-        acti = tanh(z)
+        acti = ActiFunctions().tanh(z)
 
         r =  np.dot(self.w2, acti) + self.b2
         r_shifted = r - np.max(r, axis=0, keepdims=True)

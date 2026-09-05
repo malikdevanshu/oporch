@@ -1,22 +1,16 @@
 import numpy as np
 
 class Loss:
-    def __init__(self,y_hat, y):
-        self.y_hat = y_hat
-        self.y = y
-        self.out_dim = y.shape[1]
-
-    def cross_entropy(self):
-        n = self.out_dim
-        loss = -(1 / n) * (self.y * np.log(self.y_hat) - (1 - self.y)* np.log(1 - self.y_hat))
+    def cross_entropy(self, y_hat, y, n):
+        
+        loss = -(1 / n) * (y * np.log(y_hat) - (1 - y)* np.log(1 - y_hat))
         return loss 
 
-    def cross_entropy_gradient(self):
-        dR = (self.y_hat - self.y) / self.out_dim
+    def cross_entropy_gradient(self, y_hat, y, n):
+        dR = (y_hat - y) / n
 
         return dR
 
-    def multiclass_cross_entropy(self):
-        n = self.out_dim
-        loss = -(1 / n) * np.sum(self.y * np.log(self.y_hat))
+    def multiclass_cross_entropy(self, y_hat, y, n):
+        loss = -(1 / n) * np.sum(y * np.log(y_hat))
         return loss
