@@ -16,7 +16,7 @@ class NeuralNet:
 
 
         z = np.dot(self.w1, X.T) + self.b1
-        acti = ActiFunctions().tanh(z)
+        acti = ActiFunctions(z).tanh()
 
         r =  np.dot(self.w2, acti) + self.b2
         r_shifted = r - np.max(r, axis=0, keepdims=True)

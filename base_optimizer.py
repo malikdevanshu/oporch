@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 from rate_scheduler import Scheduler
 from losses import Loss
+from line_search import BackTrackingLineSearch
 
 class BaseOptimizer(ABC):
     def __init__(
@@ -29,72 +30,11 @@ class BaseOptimizer(ABC):
      
         return grad_norm_sq
 
-    def line_search(self, model,
-                X, y, gradients,
-                current_loss,
-                ):
-    
-            alpha = self.learning_rate
-    
-            grad_norm_sq = self.gradient_norm_squared(gradients)
-    
-            # Save current parameters
-            original_w1 = model.w1.copy()
-            original_b1 = model.b1.copy()
-            original_w2 = model.w2.copy()
-            original_b2 = model.b2.copy()
-            accepted = False
-    
-            while alpha > 1e-12:
-                model.w1 = original_w1 - alpha * gradients["w1"]
-                model.b1 = original_b1 - alpha * gradients["b1"]
-    
-                model.w2 = original_w2 - alpha * gradients["w2"]
-                model.b2 = original_b2 - alpha * gradients["b2"]
-    
-                y_hat, _ = model.forward_pass(X)
-    
-                n = y.shape[1]
-    
-                new_loss = -(1 / n) * np.sum(
-                    y * np.log(y_hat)
-                )
-                if new_loss <= (
-                    current_loss
-                    - self.c1 * alpha * grad_norm_sq
-                ):
-                    
-                    accepted = True
-                    break
-    
-                alpha *= 0.5
-            model.w1 = original_w1
-            model.b1 = original_b1
-    
-            model.w2 = original_w2
-            model.b2 = original_b2
-    
-            if not accepted:
-                return 0.0
-    
-            return alpha
-
-    def step(
-            self,
-            model,
-            gradients,
-            alpha,
-        ):
-    
-            model.w1 -= alpha * gradients["w1"]
-            model.b1 -= alpha * gradients["b1"]
-    
-            model.w2 -= alpha * gradients["w2"]
-            model.b2 -= alpha * gradients["b2"]
 
     def optimize(self, model, X, y):
             n = y.shape[1]
             cost = Loss()
+            search = BackTrackingLineSearch(c1= 1e-4, reduction = 0.5)
     
             for iteration in range(self.max_iter):
     
@@ -119,12 +59,13 @@ class BaseOptimizer(ABC):
                 print("gradient norm:", np.sqrt(grad_norm))
     
     
-                alpha = self.line_search(
+                alpha = search.line_search(
                     model,
                     X,
                     y,
                     gradients,
                     loss,
+                    self.learning_rate
                 )
                 print("alpha:", alpha)
     
@@ -249,10 +190,6 @@ class BaseOptimizer(ABC):
         alpha,
     ):
         pass
-    
-    @abstractmethod
-    def optimize(self, model, X, y):
-          pass
     
     
     

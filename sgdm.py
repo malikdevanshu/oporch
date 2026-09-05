@@ -2,8 +2,8 @@ from base_optimizer import BaseOptimizer
 import numpy as np
 
 class SGDM(BaseOptimizer):
-    def __init__(self, momentum=0.9):
-        super().__init__()
+    def __init__(self, momentum=0.9, **kwargs):
+        super().__init__(**kwargs)
         self.momentum = momentum
         self.velocity = None
 

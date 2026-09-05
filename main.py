@@ -1,6 +1,6 @@
 from dataset import Dataset
 from neural_net import NeuralNet
-from optimizer import SGD
+from sgd import SGD
 import numpy as np
 
 def main():
