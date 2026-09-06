@@ -1,6 +1,5 @@
 import numpy as np
-from activations import ActiFunctions
-from losses import Loss
+from utils.activations import ActiFunctions
 
 class NeuralNet:
     def __init__(self, input_dim, hidden_dim, output_dim):

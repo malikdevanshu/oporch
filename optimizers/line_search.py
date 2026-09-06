@@ -49,7 +49,7 @@ class BackTrackingLineSearch:
                     accepted = True
                     break
     
-                alpha *= 0.5
+                alpha *= self.reduction
             model.w1 = original_w1
             model.b1 = original_b1
     

@@ -1,6 +1,5 @@
 import numpy as np
-from base_optimizer import BaseOptimizer
-from losses import Loss
+from .base_optimizer import BaseOptimizer
 
 class SGD(BaseOptimizer):
     def update(
@@ -14,24 +13,4 @@ class SGD(BaseOptimizer):
 
         model.w2 -= alpha * gradients["w2"]
         model.b2 -= alpha * gradients["b2"]
-
         
-
-
-
-
-
-
-    
-                
-
-
-        
-        
-        
-
-
-        
-
-
-

@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 import numpy as np
-from rate_scheduler import Scheduler
-from losses import Loss
-from line_search import BackTrackingLineSearch
+from utils.rate_scheduler import Scheduler
+from utils.losses import Loss
 
 class BaseOptimizer(ABC):
     def __init__(
@@ -10,13 +9,11 @@ class BaseOptimizer(ABC):
             learning_rate=1.0,   #I'll further make it user defined rather than general!
             max_iter=100,
             tolerance=1e-6,
-            c1=1e-4,
         ):
     
             self.learning_rate = learning_rate
             self.max_iter = max_iter
             self.tolerance = tolerance
-            self.c1 = c1
     
             self.history = []
 
@@ -29,64 +26,6 @@ class BaseOptimizer(ABC):
                          )             #Here too Later I'll make it general
      
         return grad_norm_sq
-
-
-    def optimize(self, model, X, y):
-            n = y.shape[1]
-            cost = Loss()
-            search = BackTrackingLineSearch(c1= 1e-4, reduction = 0.5)
-    
-            for iteration in range(self.max_iter):
-    
-                y_hat, cache = model.forward_pass(X)
-    
-                loss = cost.multiclass_cross_entropy(y_hat, y, n)#-(1 / n) * np.sum(y * np.log(y_hat))
-    
-                gradients = model.backward(
-                    cache, 
-                    y,
-                )
-    
-                grad_norm = self.gradient_norm_squared(
-                    gradients
-                )
-    
-                if np.sqrt(grad_norm) < self.tolerance:
-                    break
-    
-                print("iteration:", iteration)
-                print("loss before step:", loss)
-                print("gradient norm:", np.sqrt(grad_norm))
-    
-    
-                alpha = search.line_search(
-                    model,
-                    X,
-                    y,
-                    gradients,
-                    loss,
-                    self.learning_rate
-                )
-                print("alpha:", alpha)
-    
-                self.update(
-                    model,
-                    gradients,
-                    alpha,
-                )
-    
-                new_y_hat, _ = model.forward_pass(X)
-    
-                new_loss = -(1 / n) * np.sum(
-                    y * np.log(new_y_hat)
-                )
-    
-                print("loss after step:", new_loss)
-                print("-------------------")
-    
-                self.history.append(new_loss)
-    
-            return self.history
     
 
     def mini_batch(self, X, y, batch_size, shuffle):
@@ -178,6 +117,7 @@ class BaseOptimizer(ABC):
             )
 
         return self.history
+    
 
     def initialize_state(self, model):
         pass

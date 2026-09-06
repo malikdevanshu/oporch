@@ -1,4 +1,4 @@
-from base_optimizer import BaseOptimizer
+from .base_optimizer import BaseOptimizer
 import numpy as np
 
 class SGDM(BaseOptimizer):
